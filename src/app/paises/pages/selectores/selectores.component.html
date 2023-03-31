@@ -15,25 +15,39 @@
                   [value]="region | lowercase ">{{ region }} </option>
 
         </select>
+      </div>
 
         <!-- paises -->
-        <label class="form-label">Pais:</label>
+        <div class="row" *ngIf="paisesPorRegion.length !== 0">
+          <label class="form-label">Pais:</label>
         <select class="form-control"
                 formControlName="paises">
           <option value=""> -- Selecione Pais -- </option>
           <option  *ngFor="let paises of paisesPorRegion"
                   [value]="paises.cca3">{{ paises.name.common }} </option>
         </select>
-      </div>
+        </div>
+
 
         <!-- fronteras -->
-        <label class="form-label">Fronteras:</label>
+        <div class="row" *ngIf="borders?.length !== 0">
+          <label class="form-label">Fronteras:</label>
         <select class="form-control"
                 formControlName="fronteras">
           <option value=""> -- Selecione la Frontera -- </option>
           <option  *ngFor="let borde of borders"
-                  [value]="borde">{{ borde }} </option>
+                  [value]="borde.cca3">{{ borde.name }} </option>
         </select>
+        </div>
+      </div>
+
+
+    <div class="row" *ngIf="cargando" >
+      <div class="col">
+        <div class="alert alert-primary">
+          Cargando....
+        </div>
+      </div>
     </div>
 
     <button type="submit" class="btn btn-primary m-5 float-end">Guardar</button>

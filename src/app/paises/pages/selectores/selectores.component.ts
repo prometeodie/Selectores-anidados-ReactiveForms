@@ -20,7 +20,10 @@ export class SelectoresComponent implements OnInit {
 
   regiones       : string[] = [];
   paisesPorRegion: PaisSmall[] = [];
-  borders        : string[] | null = [];
+  borders        : PaisSmall[]= [];
+
+  // UI
+  cargando: boolean = false;
 
 
   constructor(private fb: FormBuilder,
@@ -37,21 +40,33 @@ export class SelectoresComponent implements OnInit {
 
     this.miFormulario.get('region')?.valueChanges
     .pipe(
-      tap(( _ ) => this.miFormulario.get('paises')?.reset('')),
+      tap(( _ ) => {
+        this.miFormulario.get('paises')?.reset('');
+        this.cargando = true ;
+      }),
       switchMap( region => this.paisesServices.getPaisesPorRegion(region) )
     )
     .subscribe(
-      paises => this.paisesPorRegion = paises
+      paises =>{
+        this.paisesPorRegion = paises;
+        this.cargando = false ;}
     )
 
     this.miFormulario.get('paises')?.valueChanges
     .pipe(
-      switchMap(code => this.paisesServices.getPaisPorAlphaCode(code))
+      tap(( _ ) => {
+        this.miFormulario.get('fronteras')?.reset('');
+        this.cargando = true;
+      }),
+      switchMap(code => this.paisesServices.getPaisPorAlphaCode(code)),
+      switchMap(pais => this.paisesServices.getPaisesPorBorders(pais?.borders!) )
     )
-    .subscribe(pais =>this.borders = pais?.borders || [])
+    .subscribe(paises =>{
+      this.borders = paises;
+      this.cargando = false;
+    })
 
   }
-
 
   guardar(){
     console.log(this.miFormulario.value);
